@@ -1,0 +1,11 @@
+---
+// Café Raya's round badge. Colour follows the text colour of its parent.
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<svg viewBox="0 0 1600 1602" class={cls} aria-hidden="true" focusable="false">
+  <use href="#raya-badge"></use>
+</svg>

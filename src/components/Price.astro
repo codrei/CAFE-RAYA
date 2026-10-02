@@ -1,0 +1,9 @@
+---
+interface Props {
+  amount: number;
+  class?: string;
+}
+const { amount, class: cls = '' } = Astro.props;
+---
+
+<span class:list={['whitespace-nowrap', cls]}><span class="mr-px">₱</span>{amount}</span>

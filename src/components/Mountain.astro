@@ -1,0 +1,33 @@
+---
+/**
+ * A single-line ridge, drawn in the same hairline as the botanicals —
+ * a nod to the view of Mt. Maculot from the rooftop.
+ */
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 1200 120"
+  preserveAspectRatio="none"
+  class={cls}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.25"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path
+    d="M0 116 C120 114 230 108 330 96 C420 85 488 66 548 46 C590 32 622 20 652 22 C680 24 694 38 716 36 C738 34 748 20 768 24 C790 28 798 56 824 76 C872 104 980 110 1200 112"
+    vector-effect="non-scaling-stroke"
+  />
+  <path
+    d="M0 119 C190 118 318 112 420 104 C512 97 576 86 632 80 C712 72 790 84 886 98 C990 110 1090 115 1200 117"
+    vector-effect="non-scaling-stroke"
+    opacity="0.5"
+  />
+</svg>

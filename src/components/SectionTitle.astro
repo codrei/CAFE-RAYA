@@ -1,0 +1,48 @@
+---
+import Botanical from './Botanical.astro';
+
+/**
+ * Two heading styles, one per kind of board:
+ *   drinks — "──── COFFEE BASED FRAPPE ────" in the classical serif
+ *   food   — "🌿 SNACKS 🌿" in heavy condensed caps with a diamond rule
+ */
+interface Props {
+  title: string;
+  kind?: 'drinks' | 'food';
+  id?: string;
+  note?: string;
+  script?: string;
+}
+const { title, kind = 'drinks', id, note, script } = Astro.props;
+---
+
+<div class="text-center">
+  {
+    kind === 'drinks' ? (
+      <div class="flex items-center justify-center gap-4 sm:gap-6">
+        <span class="h-px w-8 bg-ink/45 sm:w-20" aria-hidden="true" />
+        <h2 id={id} class="font-display text-[1.4rem] leading-tight font-semibold tracking-[0.1em] uppercase sm:text-3xl">
+          {title}
+        </h2>
+        <span class="h-px w-8 bg-ink/45 sm:w-20" aria-hidden="true" />
+      </div>
+    ) : (
+      <>
+        <div class="flex items-center justify-center gap-2 sm:gap-4">
+          <Botanical variant="laurel" class="w-9 shrink-0 text-ink sm:w-12" />
+          <h2 id={id} class="font-condensed text-[2.4rem] leading-none font-semibold tracking-wide uppercase sm:text-5xl">
+            {title}
+          </h2>
+          <Botanical variant="laurel" flip class="w-9 shrink-0 text-ink sm:w-12" />
+        </div>
+        <div class="mx-auto mt-3 flex w-40 items-center gap-2" aria-hidden="true">
+          <span class="h-px flex-1 bg-ink/35" />
+          <span class="size-1.5 rotate-45 bg-espresso/80" />
+          <span class="h-px flex-1 bg-ink/35" />
+        </div>
+      </>
+    )
+  }
+  {note && <p class="mt-3 text-[0.7rem] font-medium tracking-[0.28em] text-ink-soft uppercase">{note}</p>}
+  {script && <p class="mt-2 font-script text-2xl text-espresso sm:text-[1.75rem]">{script}</p>}
+</div>

@@ -1,0 +1,199 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Botanical from '../components/Botanical.astro';
+import Mountain from '../components/Mountain.astro';
+import MenuCard from '../components/MenuCard.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import Wordmark from '../assets/brand/wordmark.svg';
+import Badge from '../components/Badge.astro';
+import { cafe } from '../data/cafe';
+import { menu } from '../data/menu';
+import { menuImage } from '../data/images';
+
+// Featured drinks are their own pick: the "Cafe Raya New Drinks" board.
+const newDrinks = menu.find((section) => section.id === 'new-drinks')!.groups[0].items;
+
+// One photo to stand for each section on the home page.
+const covers: Record<string, string> = {
+  'new-drinks': 'iced-biscoffee',
+  coffee: 'caramel-macchiato',
+  frappe: 'java-chip-frappe',
+  'iced-non-coffee': 'iced-strawberry-matcha',
+  'fruit-tea': 'passion-fruit-tea',
+  yogurt: 'blueberry-yogurt',
+  'rice-meals': 'beef-tapa',
+  snacks: 'beef-burger',
+  pasta: 'carbonara',
+  waffles: 'chocolate-waffle',
+};
+const countOf = (id: string) =>
+  menu.find((section) => section.id === id)!.groups.reduce((total, group) => total + group.items.length, 0);
+const drinkSections = menu.filter((section) => section.kind === 'drinks');
+const foodSections = menu.filter((section) => section.kind === 'food');
+---
+
+<Base
+  title="Café Raya — Coffee, frappes & comfort food in Cuenca, Batangas"
+  description="Coffee, frappes, rice meals and waffles on the 3rd floor of FJ's Building in Ibabao, Cuenca, Batangas — with a rooftop view of Mt. Maculot."
+>
+  <!-- ───────────────────────── Hero ───────────────────────── -->
+  <section class="relative overflow-hidden">
+    <Botanical class="pointer-events-none absolute -top-1 -left-3 w-28 text-ink/75 sm:w-48 lg:w-60" />
+    <Botanical flip class="pointer-events-none absolute -top-1 -right-3 w-28 text-ink/75 sm:w-48 lg:w-60" />
+
+    <div class="relative mx-auto max-w-3xl px-6 pt-24 pb-36 text-center sm:pb-44">
+      <h1>
+        <Wordmark role="img" aria-label="Café Raya" class="mx-auto h-auto w-60 text-ink sm:w-80 lg:w-[22rem]" />
+      </h1>
+      <p class="mt-7 flex items-center justify-center gap-3 text-[0.7rem] font-medium tracking-[0.35em] text-ink-soft uppercase">
+        <span class="h-px w-8 bg-ink/40" aria-hidden="true"></span>
+        Cuenca · Batangas
+        <span class="h-px w-8 bg-ink/40" aria-hidden="true"></span>
+      </p>
+      <p class="mt-5 font-script text-[2rem] leading-tight text-espresso sm:text-[2.6rem]">{cafe.tagline}</p>
+      <p class="mx-auto mt-4 max-w-md text-[1.05rem] leading-relaxed text-ink-soft">
+        Coffee, frappes, rice meals and waffles on the 3rd floor of FJ's Building — with a rooftop view of {cafe.view}.
+      </p>
+      <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="/menu" class="btn btn-dark w-full sm:w-auto">See the menu</a>
+        <a href={cafe.messenger} class="btn btn-line w-full sm:w-auto" target="_blank" rel="noopener">Message us</a>
+      </div>
+    </div>
+
+    <Mountain class="pointer-events-none absolute inset-x-0 bottom-0 h-24 w-full text-espresso/40 sm:h-32" />
+  </section>
+
+  <!-- ───────────────────────── New drinks ───────────────────────── -->
+  <section id="new" class="border-t border-line py-16 sm:py-20" aria-labelledby="new-title">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <!-- The boxed label from the top of their New Drinks board -->
+      <div class="flex items-center justify-center gap-2.5 sm:gap-4">
+        <span class="h-px max-w-40 flex-1 bg-ink/45" aria-hidden="true"></span>
+        <span class="size-1.5 shrink-0 rounded-full bg-ink/70" aria-hidden="true"></span>
+        <h2
+          id="new-title"
+          class="shrink-0 rounded-[3px] border border-ink/60 px-3.5 py-2 text-[0.74rem] font-medium tracking-[0.28em] uppercase sm:px-6 sm:text-sm"
+        >
+          Café Raya New Drinks
+        </h2>
+        <span class="size-1.5 shrink-0 rounded-full bg-ink/70" aria-hidden="true"></span>
+        <span class="h-px max-w-40 flex-1 bg-ink/45" aria-hidden="true"></span>
+      </div>
+      <p class="mt-4 text-center font-script text-2xl text-espresso sm:text-[1.75rem]">Made with love, just for you.</p>
+
+      <ul class="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-x-4 gap-y-12 sm:gap-x-6">
+        {
+          newDrinks.map((item, index) => (
+            <MenuCard
+              item={item}
+              kind="drinks"
+              eager={index < 2}
+              class="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]"
+            />
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Menu at a glance ───────────────────────── -->
+  <section class="border-t border-line py-16 sm:py-20" aria-labelledby="glance-title">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <SectionTitle title="The Menu" id="glance-title" script="Good drinks. Great vibes." />
+
+      <h3 class="mt-12 text-center text-[0.7rem] font-medium tracking-[0.3em] text-ink-soft uppercase">Drinks</h3>
+      <ul class="mx-auto mt-6 grid max-w-5xl grid-cols-3 gap-x-3 gap-y-9 sm:grid-cols-6 sm:gap-x-5">
+        {
+          drinkSections.map((section) => (
+            <li>
+              <a href={`/menu#${section.id}`} class="group flex flex-col items-center text-center">
+                <Image
+                  src={menuImage(covers[section.id])}
+                  alt=""
+                  width={120}
+                  densities={[1, 2]}
+                  class="aspect-[3/4] h-auto w-full max-w-[120px] transition-transform duration-300 group-hover:-translate-y-1"
+                />
+                <span class="mt-3 font-display text-[0.78rem] leading-tight font-semibold tracking-[0.06em] uppercase sm:text-sm">
+                  {section.title}
+                </span>
+                <span class="mt-1 text-xs text-muted">{countOf(section.id)} drinks</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Food sits on the sand panel colour of their snacks board -->
+      <div class="mx-auto mt-14 max-w-5xl rounded-xl bg-sand px-4 py-9 sm:px-8">
+        <h3 class="text-center text-[0.7rem] font-medium tracking-[0.3em] text-ink-soft uppercase">Food</h3>
+        <ul class="mt-6 grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-4 sm:gap-x-6">
+          {
+            foodSections.map((section) => (
+              <li>
+                <a href={`/menu#${section.id}`} class="group flex flex-col items-center text-center">
+                  <Image
+                    src={menuImage(covers[section.id])}
+                    alt=""
+                    width={220}
+                    densities={[1, 2]}
+                    class="aspect-[3/2] h-auto w-full max-w-[220px] rounded-md transition-transform duration-300 group-hover:-translate-y-1"
+                  />
+                  <span class="mt-3 font-condensed text-lg leading-none font-semibold tracking-wide uppercase">{section.title}</span>
+                  <span class="mt-1.5 text-xs text-ink-soft">{countOf(section.id)} dishes</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="mt-12 text-center">
+        <a href="/menu" class="btn btn-dark">See the full menu</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Visit ───────────────────────── -->
+  <section id="visit" class="bg-espresso text-paper" aria-labelledby="visit-title">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+      <div>
+        <Badge class="size-20 text-paper" />
+        <h2 id="visit-title" class="mt-6 font-display text-3xl font-semibold tracking-[0.1em] uppercase sm:text-4xl">Visit us</h2>
+        <p class="mt-2 font-script text-[1.75rem] text-sand">Good coffee. Good mood.</p>
+        <p class="mt-4 max-w-sm leading-relaxed text-paper/80">
+          Up on the 3rd floor of FJ's Building, with a view of {cafe.view} from the rooftop.
+        </p>
+      </div>
+
+      <div>
+        <dl class="divide-y divide-paper/15 border-y border-paper/15">
+          <div class="grid gap-1 py-4 sm:grid-cols-[8.5rem_1fr] sm:gap-4">
+            <dt class="text-[0.7rem] font-medium tracking-[0.28em] text-paper/65 uppercase sm:pt-1.5">Find us</dt>
+            <dd class="text-lg leading-snug">{cafe.address.line1}<br />{cafe.address.line2}</dd>
+          </div>
+          <div class="grid gap-1 py-4 sm:grid-cols-[8.5rem_1fr] sm:gap-4">
+            <dt class="text-[0.7rem] font-medium tracking-[0.28em] text-paper/65 uppercase sm:pt-1.5">Open</dt>
+            <dd class="text-lg">{cafe.hours}</dd>
+          </div>
+          <div class="grid gap-1 py-4 sm:grid-cols-[8.5rem_1fr] sm:gap-4">
+            <dt class="text-[0.7rem] font-medium tracking-[0.28em] text-paper/65 uppercase sm:pt-1.5">Call or text</dt>
+            <dd class="text-lg">
+              <a href={cafe.phone.tel} class="underline decoration-paper/30 underline-offset-4 hover:decoration-paper">
+                {cafe.phone.display}
+              </a>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-8 grid gap-3 sm:grid-cols-2">
+          <a href={cafe.messenger} class="btn btn-cream" target="_blank" rel="noopener">Message us</a>
+          <a href={cafe.directions} class="btn btn-cream-line" target="_blank" rel="noopener">Get directions</a>
+          <a href={cafe.phone.tel} class="btn btn-cream-line">Call</a>
+          <a href={cafe.phone.sms} class="btn btn-cream-line">Send a text</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

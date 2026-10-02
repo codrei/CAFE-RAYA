@@ -1,0 +1,60 @@
+---
+import Badge from './Badge.astro';
+import { cafe } from '../data/cafe';
+
+const links = [
+  { href: '/menu', label: 'Menu' },
+  { href: '/#new', label: 'New drinks' },
+  { href: '/#visit', label: 'Visit' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="sticky top-0 z-40 h-16 border-b border-line bg-paper/95 backdrop-blur-sm">
+  <div class="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <a href="/" class="flex items-center gap-2.5" aria-label="Café Raya, home">
+      <Badge class="size-10 text-ink" />
+      <span class="font-display text-[1.05rem] font-semibold tracking-[0.14em]" aria-hidden="true">CAFÉ RAYA</span>
+    </a>
+
+    <nav aria-label="Main" class="hidden items-center gap-8 md:flex">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="text-[0.78rem] font-medium tracking-[0.2em] text-ink-soft uppercase transition-colors hover:text-ink"
+            aria-current={path === link.href ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a href={cafe.messenger} class="btn btn-dark btn-sm" target="_blank" rel="noopener">Message us</a>
+    </nav>
+
+    <!-- Phones: a plain <details> dropdown, so the menu works even before any JavaScript loads. -->
+    <details class="relative md:hidden" data-nav>
+      <summary
+        class="flex size-11 cursor-pointer list-none items-center justify-center rounded-md border border-ink/20 [&::-webkit-details-marker]:hidden"
+        aria-label="Open navigation"
+      >
+        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </summary>
+      <div class="absolute top-[calc(100%+0.6rem)] right-0 w-64 rounded-md border border-line bg-paper p-2 shadow-xl shadow-ink/10">
+        {
+          links.map((link) => (
+            <a
+              href={link.href}
+              class="block rounded px-3 py-3 text-[0.8rem] font-medium tracking-[0.2em] text-ink uppercase hover:bg-paper-warm"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+        <a href={cafe.messenger} class="btn btn-dark mt-2 w-full" target="_blank" rel="noopener">Message us</a>
+      </div>
+    </details>
+  </div>
+</header>

@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import Price from './Price.astro';
+import { menuImage } from '../data/images';
+import type { MenuItem } from '../data/menu';
+
+/** A photo with the name and price beneath — the layout of their drinks boards. */
+interface Props {
+  item: MenuItem;
+  kind: 'drinks' | 'food';
+  class?: string;
+  eager?: boolean;
+}
+const { item, kind, class: cls = '', eager = false } = Astro.props;
+const food = kind === 'food';
+---
+
+<li class:list={['flex flex-col items-center text-center', cls]}>
+  <Image
+    src={menuImage(item.image)}
+    alt={item.name}
+    widths={food ? [220, 330, 440] : [160, 220, 320]}
+    sizes={food ? '(min-width: 640px) 260px, 45vw' : '(min-width: 640px) 200px, 45vw'}
+    loading={eager ? 'eager' : 'lazy'}
+    class:list={['h-auto w-full', food ? 'aspect-[3/2] rounded-md' : 'aspect-[3/4]']}
+  />
+  <h3 class="mt-3 text-[0.95rem] leading-snug font-medium text-ink sm:text-base">{item.name}</h3>
+  {item.description && <p class="mt-1 max-w-[16rem] text-sm leading-snug text-muted">{item.description}</p>}
+  <Price
+    amount={item.price}
+    class:list={['mt-auto pt-1.5', food ? 'font-condensed text-lg font-semibold' : 'font-display text-base font-semibold']}
+  />
+</li>

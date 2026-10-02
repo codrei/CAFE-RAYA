@@ -1,0 +1,26 @@
+---
+import Badge from './Badge.astro';
+import { cafe } from '../data/cafe';
+---
+
+<footer class="border-t border-line bg-paper">
+  <div class="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6">
+    <Badge class="mx-auto size-16 text-ink" />
+    <p class="mt-5 font-script text-[1.7rem] text-espresso">Good drinks. Great vibes.</p>
+    <p class="mx-auto mt-5 max-w-xs text-[0.68rem] font-medium tracking-[0.3em] text-balance text-ink-soft uppercase sm:max-w-none">
+      <span aria-hidden="true">• </span>Thank you for supporting Café Raya!<span aria-hidden="true"> •</span>
+    </p>
+
+    <nav aria-label="Footer" class="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-sm text-ink-soft">
+      <a href="/menu" class="hover:text-ink">Menu</a>
+      <a href={cafe.facebook} class="hover:text-ink" target="_blank" rel="noopener">Facebook</a>
+      <a href={cafe.directions} class="hover:text-ink" target="_blank" rel="noopener">Directions</a>
+      <a href={cafe.phone.tel} class="hover:text-ink">{cafe.phone.display}</a>
+    </nav>
+
+    <p class="mt-10 text-xs text-muted">
+      Website preview by{' '}
+      <a href="https://marcobelen.vercel.app" class="underline decoration-ink/25 underline-offset-4 hover:text-ink hover:decoration-ink" target="_blank" rel="noopener">Marco Belen</a>
+    </p>
+  </div>
+</footer>

@@ -1,0 +1,93 @@
+---
+import SectionTitle from './SectionTitle.astro';
+import MenuCard from './MenuCard.astro';
+import MenuRow from './MenuRow.astro';
+import Price from './Price.astro';
+import type { MenuSection } from '../data/menu';
+
+interface Props {
+  section: MenuSection;
+}
+const { section } = Astro.props;
+const food = section.kind === 'food';
+
+/**
+ * Cards sit in a centred, wrapping row so an uneven last row stays centred,
+ * the way their boards set 7 drinks as 4 + 3. Columns per row follow the
+ * group size: 5 → 5 across, 6 → 3 across, everything else → 4 across.
+ */
+function gridFor(count: number) {
+  if (count % 5 === 0) {
+    return { wrap: 'max-w-5xl', card: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(20%-1.2rem)]' };
+  }
+  if (count === 6) {
+    return { wrap: 'max-w-4xl', card: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)]' };
+  }
+  return { wrap: 'max-w-4xl', card: 'w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)]' };
+}
+---
+
+<section
+  id={section.id}
+  aria-labelledby={`${section.id}-title`}
+  class:list={['border-t', food ? 'border-ink/10 bg-sand' : 'border-line bg-paper']}
+>
+  <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+    <SectionTitle
+      title={section.title}
+      kind={section.kind}
+      id={`${section.id}-title`}
+      note={section.note}
+      script={section.script}
+    />
+
+    {
+      section.groups.map((group) => {
+        const grid = gridFor(group.items.length);
+        return (
+          <div class="mt-10 sm:mt-12">
+            {group.title && (
+              <h3 class="mb-7 flex items-center justify-center gap-3 text-center text-[0.7rem] font-medium tracking-[0.3em] text-ink-soft uppercase">
+                <span class="h-px w-8 bg-ink/30" aria-hidden="true" />
+                {group.title}
+                <span class="h-px w-8 bg-ink/30" aria-hidden="true" />
+              </h3>
+            )}
+            {section.layout === 'grid' ? (
+              <ul class:list={['mx-auto flex flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6', grid.wrap]}>
+                {group.items.map((item) => (
+                  <MenuCard item={item} kind={section.kind} class={grid.card} />
+                ))}
+              </ul>
+            ) : (
+              <ul class="mx-auto grid max-w-5xl gap-x-12 md:grid-cols-2">
+                {group.items.map((item) => (
+                  <MenuRow item={item} kind={section.kind} />
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })
+    }
+
+    {
+      section.addOns && (
+        <div class="mx-auto mt-12 max-w-3xl rounded-md border border-ink/20 px-5 py-6 sm:px-8">
+          <h3 class="text-center text-[0.7rem] font-medium tracking-[0.3em] text-ink-soft uppercase">Add-ons</h3>
+          <ul class="mt-4 grid gap-x-10 sm:grid-cols-2">
+            {section.addOns.map((addOn) => (
+              <li class="flex items-baseline justify-between gap-3 border-b border-dotted border-ink/25 py-2.5">
+                <span>
+                  {addOn.name}
+                  {addOn.detail && <span class="block text-xs text-muted">{addOn.detail}</span>}
+                </span>
+                <Price amount={addOn.price} class="font-display font-semibold" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>

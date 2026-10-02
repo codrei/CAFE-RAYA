@@ -1,0 +1,103 @@
+---
+/**
+ * Line drawings in the style of the coffee branches, beans and laurel sprigs
+ * on Café Raya's menu boards. Built from simple shapes so the strokes stay
+ * hairline-thin at any size.
+ */
+interface Props {
+  variant?: 'branch' | 'laurel';
+  flip?: boolean;
+  class?: string;
+}
+const { variant = 'branch', flip = false, class: cls = '' } = Astro.props;
+
+type Pt = [number, number];
+const n = (v: number) => v.toFixed(1);
+
+/** Almond-shaped leaf with a midrib, from (x, y) pointing `deg` degrees. */
+function leaf(x: number, y: number, len: number, w: number, deg: number) {
+  const r = (deg * Math.PI) / 180;
+  const c = Math.cos(r);
+  const s = Math.sin(r);
+  const P = (u: number, v: number) => `${n(x + u * c - v * s)} ${n(y + u * s + v * c)}`;
+  return [
+    `M${P(0, 0)} C${P(len * 0.28, -w)} ${P(len * 0.72, -w * 0.85)} ${P(len, 0)} C${P(len * 0.72, w * 0.85)} ${P(len * 0.28, w)} ${P(0, 0)}`,
+    `M${P(len * 0.1, 0)} Q${P(len * 0.5, w * 0.15)} ${P(len * 0.85, 0)}`,
+  ];
+}
+
+/** Coffee bean: an oval with the S-shaped seam down the middle. */
+function bean(cx: number, cy: number, deg: number, scale = 1) {
+  const rx = 7 * scale;
+  const ry = 10.5 * scale;
+  const r = (deg * Math.PI) / 180;
+  const c = Math.cos(r);
+  const s = Math.sin(r);
+  const P = (u: number, v: number) => `${n(cx + u * c - v * s)} ${n(cy + u * s + v * c)}`;
+  return [
+    `M${P(0, -ry)} C${P(rx * 1.33, -ry)} ${P(rx * 1.33, ry)} ${P(0, ry)} C${P(-rx * 1.33, ry)} ${P(-rx * 1.33, -ry)} ${P(0, -ry)}`,
+    `M${P(0, -ry * 0.82)} C${P(rx * 0.6, -ry * 0.3)} ${P(-rx * 0.6, ry * 0.3)} ${P(0, ry * 0.82)}`,
+  ];
+}
+
+/** Point and direction along a quadratic curve. */
+function along(a: Pt, b: Pt, c: Pt, t: number) {
+  const m = 1 - t;
+  return {
+    x: m * m * a[0] + 2 * m * t * b[0] + t * t * c[0],
+    y: m * m * a[1] + 2 * m * t * b[1] + t * t * c[1],
+    deg: (Math.atan2(2 * m * (b[1] - a[1]) + 2 * t * (c[1] - b[1]), 2 * m * (b[0] - a[0]) + 2 * t * (c[0] - b[0])) * 180) / Math.PI,
+  };
+}
+
+const paths: string[] = [];
+let viewBox = '';
+
+if (variant === 'branch') {
+  // A branch reaching in from the corner, leaves alternating, beans below.
+  viewBox = '-6 -34 262 250';
+  const a: Pt = [-4, 26];
+  const b: Pt = [118, 4];
+  const c: Pt = [232, 132];
+  paths.push(`M${a.join(' ')} Q${b.join(' ')} ${c.join(' ')}`);
+  [0.12, 0.24, 0.36, 0.48, 0.6, 0.72, 0.84].forEach((t, i) => {
+    const p = along(a, b, c, t);
+    const len = 46 - i * 3.6;
+    paths.push(...leaf(p.x, p.y, len, len * 0.34, p.deg + (i % 2 ? 54 : -54)));
+  });
+  const tip = along(a, b, c, 1);
+  paths.push(...leaf(tip.x, tip.y, 24, 8, tip.deg));
+  paths.push(...bean(30, 148, -28), ...bean(56, 164, 22), ...bean(30, 182, 72, 0.9));
+} else {
+  // Small laurel sprig, like the ones either side of "SNACKS" and "RICE MEALS".
+  viewBox = '-4 -8 76 50';
+  const a: Pt = [70, 36];
+  const b: Pt = [36, 34];
+  const c: Pt = [4, 6];
+  paths.push(`M${a.join(' ')} Q${b.join(' ')} ${c.join(' ')}`);
+  [0.18, 0.36, 0.54, 0.72].forEach((t, i) => {
+    const p = along(a, b, c, t);
+    const len = 14 - i * 1.6;
+    paths.push(...leaf(p.x, p.y, len, len * 0.38, p.deg - 46));
+    paths.push(...leaf(p.x, p.y, len * 0.92, len * 0.36, p.deg + 46));
+  });
+  const tip = along(a, b, c, 1);
+  paths.push(...leaf(tip.x, tip.y, 10, 3.6, tip.deg));
+}
+---
+
+<svg
+  viewBox={viewBox}
+  class={cls}
+  style={flip ? 'transform: scaleX(-1)' : undefined}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  overflow="visible"
+  aria-hidden="true"
+  focusable="false"
+>
+  {paths.map((d) => <path d={d} vector-effect="non-scaling-stroke" />)}
+</svg>

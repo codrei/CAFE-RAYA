@@ -1,0 +1,14 @@
+---
+// The badge path is ~22 KB. Define it once per page and reference it with
+// <use>, rather than pasting the full path everywhere the badge appears.
+import raw from '../assets/brand/badge.svg?raw';
+
+const viewBox = raw.match(/viewBox="([^"]+)"/)![1];
+const d = raw.match(/\sd="([^"]+)"/)![1];
+---
+
+<svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+  <symbol id="raya-badge" viewBox={viewBox}>
+    <path d={d} fill="currentColor" fill-rule="evenodd"></path>
+  </symbol>
+</svg>

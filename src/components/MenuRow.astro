@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import Price from './Price.astro';
+import { menuImage } from '../data/images';
+import type { MenuItem } from '../data/menu';
+
+/** Photo beside the name, description and price — the layout of their rice and hot-coffee boards. */
+interface Props {
+  item: MenuItem;
+  kind: 'drinks' | 'food';
+}
+const { item, kind } = Astro.props;
+const drinks = kind === 'drinks';
+---
+
+<li class="flex items-center gap-4 border-b border-dashed border-ink/20 py-4 sm:gap-5">
+  <Image
+    src={menuImage(item.image)}
+    alt={item.name}
+    width={drinks ? 76 : 132}
+    densities={[1, 2]}
+    loading="lazy"
+    class:list={['h-auto shrink-0', drinks ? 'aspect-[3/4] w-[68px] sm:w-[76px]' : 'aspect-[3/2] w-[108px] rounded-md sm:w-[132px]']}
+  />
+  <div class="min-w-0 flex-1">
+    <div class="flex items-baseline justify-between gap-3">
+      <h3 class:list={['font-condensed text-[1.05rem] leading-tight font-medium sm:text-lg', drinks && 'tracking-wide uppercase']}>
+        {item.name}
+      </h3>
+      <Price
+        amount={item.price}
+        class:list={[drinks ? 'font-display font-semibold' : 'font-condensed text-lg font-semibold']}
+      />
+    </div>
+    {
+      item.description && (
+        <p class:list={['mt-1 text-sm leading-snug', drinks ? 'text-muted' : 'text-ink-soft']}>{item.description}</p>
+      )
+    }
+    {
+      item.choices && (
+        <ul class="mt-2 flex flex-wrap gap-1.5" aria-label={item.choices.label}>
+          {item.choices.options.map((option) => (
+            <li class="rounded-full border border-ink/25 px-2.5 py-0.5 text-xs text-ink-soft">{option}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</li>
